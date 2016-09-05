@@ -23,4 +23,6 @@ public @interface ControllerMappingAnno {
 	String funcName();
 
 	String funcVer();
+	
+	String beanId() default "";
 }

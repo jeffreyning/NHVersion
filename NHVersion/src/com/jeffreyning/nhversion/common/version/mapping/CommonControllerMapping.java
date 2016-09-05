@@ -17,6 +17,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import com.jeffreyning.nhversion.common.version.cmd.IControllerCommand;
+import com.jeffreyning.nhversion.common.version.util.NHBeanUtil;
 
 /**
  * controller与cmd版本映射工具
@@ -204,8 +205,14 @@ public class CommonControllerMapping {
 			if (anno == null) {
 				continue;
 			}
-			CommonControllerMapping.registry((IControllerCommand) c
-					.newInstance());
+			String beanId=anno.beanId();
+			IControllerCommand ic=null;
+			if(beanId==null || beanId.equals("")){
+				ic=(IControllerCommand) c.newInstance();
+			}else{
+				ic=(IControllerCommand) NHBeanUtil.getNHBean(beanId);
+			}
+			CommonControllerMapping.registry(ic);
 		}
 	}
 
