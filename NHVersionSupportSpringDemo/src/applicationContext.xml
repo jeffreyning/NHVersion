@@ -14,4 +14,15 @@
 <bean id="cmd1" class="com.jeffreyning.nhversion.demo.controller.cmd.CalcuCmd1"></bean>
 <bean id="cmd2" class="com.jeffreyning.nhversion.demo.controller.cmd.CalcuCmd2"></bean>
 <bean id="cmd3" class="com.jeffreyning.nhversion.demo.controller.cmd.CalcuCmd3"></bean>
+
+<bean class="com.jeffreyning.nhversion.common.version.util.VersionMappingUtil">
+<property name="verProp">
+            <map>
+                <entry key="v3_1_0" value="v1_0_5"></entry>
+                <entry key="v3_2_0" value="v1_1_0"></entry>
+            </map>
+
+</property>
+</bean>
+
 </beans>
