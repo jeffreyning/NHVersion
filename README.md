@@ -7,6 +7,14 @@ NHVersion类库的开源代码请访问https://github.com/jeffreyning/NHVersion
 下载jar请访问nhversion-1.0.jar
 下载jar(支持spring)请访问nhversion-1.1.jar
 
+nhversion-1.3.0-RELEASE.jar已经加入maven.org中央仓库
+
+nhversion-1.3.0添加了前端version与后端version映射的功能
+比如移动端app与后台接口的version是两个团队分别维护，需要进行映射配置
+
+
+
+
 在没有NHVersion类库的情况下，一般会用ifelse处理多版本判断，例如以下的代码
 名为Calcu的接口通过ifelse判断v1_0_1 v_1_0_5 v1_1_0这3个版本如果需要增加新的版本，
 则需要修改Calcu类内部ifelse逻辑，这样容易出错，而且每个版本都要重新编写。
@@ -94,6 +102,36 @@ public class Demo {
 	}
 
 }
+
+比如移动端app与后台接口的version是两个团队分别维护，需要进行映射配置
+例如移动端v3_1_0明确配置映射为后台v1_0_5
+例如移动端v3_1_1没有明确配置映射，则自动降级为后台v1_0_5
+例如移动端v3_2_0明确配置映射为后台v1_1_0
+注意前台version是按照字符串排序自动降级的
+<bean class="com.jeffreyning.nhversion.common.version.util.VersionMappingUtil">
+<property name="verProp">
+            <map>
+                <entry key="v3_1_0" value="v1_0_5"></entry>
+                <entry key="v3_2_0" value="v1_1_0"></entry>
+            </map>
+</property>
+</bean>
+在controller收到前端version字符串时使用VersionMappingUtil.mappingVer获取后端version字符串
+再进行CommonControllerMapping.execVersionMapping调用
+public class FrontVersionChangeController {
+	public static int calcu(int param,String frontVer){
+		String version=VersionMappingUtil.mappingVer(frontVer);
+		System.out.println("frontVer is "+frontVer+" change to backVer is "+version);
+		Map paramMap=new HashMap();
+    	paramMap.put("version", version);
+    	paramMap.put("param", param);
+    	Map retMap=CommonControllerMapping.execVersionMapping("NHVersionController","calcu", version, paramMap);
+    	Integer retInt=(Integer) retMap.get("retInt");
+		return retInt;
+	}
+}
+
+
 
 注意：版本号格式为vxx_xx_xx xx代表2位数字 如v01_0_10 v1_1_6都是正确的格式
 如果需要加载spring中的cmd对象，需要配置在spring配置文件中添加<bean class="com.jeffreyning.nhversion.common.version.util.NHBeanUtil"></bean>
